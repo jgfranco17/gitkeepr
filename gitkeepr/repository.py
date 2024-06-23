@@ -100,6 +100,40 @@ def clone(url: str, destination: str):
         click.echo(result.stderr, err=True)
 
 
+@click.command("new")
+@click.option(
+    "--name",
+    type=str,
+    required=True,
+    help="Create a new basic repo-ready project directory.",
+    prompt="Enter the name of the repository directory to create",
+    default="new-project",
+)
+def new(name: str):
+    """Initialize a template repository directory."""
+    try:
+        # Create project directory if it doesn't exist
+        project_dir_path = os.path.join(os.getcwd(), name)
+        if os.path.exists(project_dir_path):
+            raise GitkeeprInputError(
+                f"Repository directory already exists: {project_dir_path}"
+            )
+        os.makedirs(project_dir_path, exist_ok=False)
+        logger.info(f"Creating project directory: {project_dir_path}")
+
+        # Create basic repository files
+        github_dir = os.path.join(project_dir_path, ".github")
+        os.makedirs(github_dir, exist_ok=True)
+        readme_content = "# Welcome to My Repository\n\nThis is a template repository."
+        with open(os.path.join(project_dir_path, "README.md"), "w") as readme_file:
+            readme_file.write(readme_content)
+        print_success(f"Template repository initialized: {project_dir_path}")
+
+    except Exception as e:
+        print_error(f"Failed to create a new project directory: {e}")
+
+
 repo.add_command(get)
 repo.add_command(clone)
 repo.add_command(create)
+repo.add_command(new)
