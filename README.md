@@ -11,7 +11,19 @@ With Gitkeepr, you can...
 - Clone repositories: Clone repositories to your local machine.
 - Manage collaborators: Add or remove collaborators from your repositories.
 
-## Installation
+## Development Setup
+
+### Preqrequisites
+
+Before getting started on development for this project, install the following on your local machine:
+
+- [Python 3.10](https://www.python.org/downloads/) or above
+- [Docker](https://docs.docker.com/engine/install/)
+
+Additional installs; optional, for developer convenience
+
+- [Just](https://github.com/casey/just) command runner
+- [Direnv](https://direnv.net/docs/installation.html)
 
 Gitkeepr can be installed using Poetry. Ensure you have Poetry installed on your system.
 
@@ -34,6 +46,13 @@ Gitkeepr can be installed using Poetry. Ensure you have Poetry installed on your
    export GITHUB_USERNAME="your username"
    export GITHUB_API_TOKEN="my-token"
    ```
+
+There is also a Docker implementation available.
+
+```shell
+docker build -t gitkeepr .
+docker run --rm -e GITHUB_API_TOKEN="${GITHUB_API_TOKEN}" -e GITHUB_USERNAME="${GITHUB_USERNAME}" gitkeepr --version
+```
 
 ## Usage
 
