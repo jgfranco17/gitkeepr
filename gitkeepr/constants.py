@@ -1,7 +1,10 @@
+import logging
 import os
 from typing import Any, Final
 
 from .errors import GitkeeprInputError
+
+logger = logging.getLogger(__name__)
 
 
 class Variable:
@@ -10,6 +13,7 @@ class Variable:
     def __init__(self, name: str) -> None:
         self.__name = name
         self.__value = os.getenv(name)
+        logger.debug(f"Loaded environment variable {name}")
 
     def __str__(self) -> str:
         displayed_value = "NOT SET" if self.__value is None else "*****"
@@ -29,6 +33,7 @@ class Variable:
     def validate(self) -> None:
         if self.__value is None:
             raise GitkeeprInputError(f"Environment variable '{self.__name}' is not set")
+        logger.debug(f"Validated environment variable '{self.__name}'")
 
 
 class Environment:

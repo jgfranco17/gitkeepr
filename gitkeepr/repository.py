@@ -7,6 +7,7 @@ import click
 from jinja2.exceptions import TemplateError, TemplateNotFound
 
 from .client import GithubClient
+from .constants import Environment
 from .errors import GitkeeprInputError, GitkeeprRuntimeError
 from .output import print_error, print_success, print_warning
 from .templating import TemplateManager
@@ -111,7 +112,10 @@ def clone(url: str, destination: str):
     prompt="Enter the name of the repository directory to create",
     default="new-project",
 )
-def new(name: str):
+@click.option(
+    "--minimal", default=False, is_flag=True, help="Generate only the minimal files"
+)
+def new(name: str, minimal: bool):
     """Initialize a template repository directory."""
     # Create project directory if it doesn't exist
     project_dir_path = os.path.join(os.getcwd(), name)
@@ -124,8 +128,9 @@ def new(name: str):
         logger.debug(f"Creating project directory: {project_dir_path}")
         templates_dir = os.path.join(os.path.dirname(__file__), "templates", "repo")
         engine = TemplateManager(templates_dir)
-        context = {"repo_name": name}
-        engine.create(project_dir_path, context)
+        Environment.GITHUB_USERNAME.validate()
+        context = {"repo_name": name, "user": Environment.GITHUB_USERNAME.value}
+        engine.create(project_dir_path, context, minimal=minimal)
 
     except TemplateNotFound as not_found_err:
         print_warning(f"Could not find template file: {not_found_err}")
