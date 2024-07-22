@@ -15,8 +15,8 @@ class Variable:
         self.__value = os.getenv(name)
         logger.debug(f"Loaded environment variable {name}")
 
-    def __str__(self) -> str:
-        displayed_value = "NOT SET" if self.__value is None else "*****"
+    def __repr__(self) -> str:
+        displayed_value = "'NOT SET'" if self.__value is None else "*****"
         return f"<Variable name={self.__name} value={displayed_value}>"
 
     def __bool__(self) -> bool:
@@ -33,7 +33,7 @@ class Variable:
     def validate(self) -> None:
         if self.__value is None:
             raise GitkeeprInputError(f"Environment variable '{self.__name}' is not set")
-        logger.debug(f"Validated environment variable '{self.__name}'")
+        logger.info(f"Validated environment variable '{self.__name}'")
 
 
 class Environment:
