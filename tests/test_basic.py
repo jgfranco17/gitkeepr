@@ -1,16 +1,9 @@
-from pathlib import Path
-
-from pytest import LogCaptureFixture, MonkeyPatch
-
-from tests.helpers import run_cli_command
+from tests.conftest import CommandRunner
 
 
-def test_help_message_sane(
-    tmp_path: Path, monkeypatch: MonkeyPatch, caplog: LogCaptureFixture
-) -> None:
+def test_help_message_sane(runner: CommandRunner) -> None:
     """Test a sane basic help call."""
-    monkeypatch.chdir(tmp_path)
-    result = run_cli_command(["--help"])
+    result = runner.run(["--help"])
     assert result.exit_code == 0
     assert (
         "Gitkeepr: CLI tool for managing Github repositories from local"
