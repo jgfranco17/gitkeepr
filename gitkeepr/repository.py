@@ -4,12 +4,11 @@ import subprocess
 from typing import Optional
 
 import click
-from jinja2.exceptions import TemplateError, TemplateNotFound
 
 from .client import GithubClient
 from .constants import Environment
 from .errors import GitkeeprInputError, GitkeeprRuntimeError
-from .output import print_error, print_success, print_warning
+from .output import print_error, print_success
 from .templating import TemplateManager
 
 logger = logging.getLogger(__name__)
@@ -119,30 +118,18 @@ def new(name: str, minimal: bool):
     """Initialize a template repository directory."""
     # Create project directory if it doesn't exist
     project_dir_path = os.path.join(os.getcwd(), name)
-    try:
-        if os.path.exists(project_dir_path):
-            raise GitkeeprInputError(
-                f"Repository directory already exists: {project_dir_path}"
-            )
-        os.makedirs(project_dir_path, exist_ok=False)
-        logger.debug(f"Creating project directory: {project_dir_path}")
-        templates_dir = os.path.join(os.path.dirname(__file__), "templates", "repo")
-        engine = TemplateManager(templates_dir)
-        Environment.GITHUB_USERNAME.validate()
-        context = {"repo_name": name, "user": Environment.GITHUB_USERNAME.value}
-        engine.create(project_dir_path, context, minimal=minimal)
-
-    except TemplateNotFound as not_found_err:
-        print_warning(f"Could not find template file: {not_found_err}")
-
-    except TemplateError as template_err:
-        print_error(f"Error while copying template: {template_err}")
-
-    except Exception as e:
-        print_error(f"Failed to create a new project directory: {e}")
-
-    else:
-        print_success(f"Created new project directory: {project_dir_path}")
+    if os.path.exists(project_dir_path):
+        raise GitkeeprInputError(
+            f"Repository directory already exists: {project_dir_path}"
+        )
+    os.makedirs(project_dir_path, exist_ok=False)
+    logger.debug(f"Creating project directory: {project_dir_path}")
+    templates_dir = os.path.join(os.path.dirname(__file__), "templates", "repo")
+    engine = TemplateManager(templates_dir)
+    Environment.GITHUB_USERNAME.validate()
+    context = {"repo_name": name, "user": Environment.GITHUB_USERNAME.value}
+    engine.create(project_dir_path, context, minimal=minimal)
+    print_success(f"Created new project directory: {project_dir_path}")
 
 
 repo.add_command(get)

@@ -6,6 +6,7 @@ import colorama
 from . import __version__
 from .collborator import collaborator
 from .constants import LoggerFormats
+from .errors import ErrorHandler
 from .output import ColorHandler
 from .repository import repo
 
@@ -31,7 +32,8 @@ def __set_logger(level: int):
         logger.addHandler(handler)
 
 
-@click.group()
+@click.group(cls=ErrorHandler)
+@click.pass_context
 @click.version_option(version=__version__)
 @click.option(
     "-v",
@@ -39,9 +41,10 @@ def __set_logger(level: int):
     count=True,
     help="Increase verbosity. Use multiple times for more detail (e.g., -vv for debug).",
 )
-def cli(verbose: int):
+def cli(context: click.Context, verbose: int):
     """Gitkeepr: CLI tool for managing Github repositories from local"""
     __set_logger(verbose)
+    context.ensure_object(dict)
 
 
 cli.add_command(repo)

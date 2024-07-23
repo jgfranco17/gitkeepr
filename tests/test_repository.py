@@ -27,3 +27,11 @@ def test_template_new_repo_success(
     ]
     for log_msg in expected_logs:
         assert log_msg in caplog.text, f"Missing log message: {log_msg}"
+
+
+def test_fail_if_repo_name_exists(runner: CommandRunner, caplog: LogCaptureFixture):
+    test_repo_name = "my-test-repo"
+    expected_repo_path = os.path.join(runner.directory, test_repo_name)
+    os.makedirs(expected_repo_path)
+    result = runner.run(["-vv", "repo", "new", "--name", test_repo_name])
+    assert result.exit_code == 2
