@@ -30,7 +30,7 @@ def test_template_new_repo_success(
 
 
 def test_fail_if_repo_name_exists(runner: TestRunner, caplog: LogCaptureFixture):
-    test_repo_name = "my-test-repo"
+    test_repo_name = "my-duplicated-repo"
     expected_repo_path = runner.get_test_resource(test_repo_name)
     os.makedirs(str(expected_repo_path))
     result = runner.run_cli(["-vv", "repo", "new", "--name", test_repo_name])
